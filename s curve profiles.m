@@ -1,25 +1,22 @@
-Ys = Yf/2;
-Yaux  = (1/2)*(1+gammar)*(Vm^2/Am);
-Ys = 
+% S-Curve Motion Control
+% M5842445 Sarayut Pongsanthia
 
-%% Plot S-Curve Zone#1 t0 - t1
-for t = 1 : 100
-    %s(t) = v0*t + (jm*t^3)/6;    
-    v(t) = v0 + (jm*t^2)/2;
-    %a(t) = jm*t;
+y = zeros(1,100); y1 = zeros(1,100); y2 = zeros(1,100);
+% SIGMF(X, [A, C]) = 1./(1 + EXP(-A*(X-C))
+
+% define variable
+  
+t = 5;                  % t = time second
+a1=7; a2=7;             % a = slope
+c1=0.8; c2 =4.2;        % c = half_point
+x = linspace(0,t,500); % amout of point for plot
+for i = 1:length(x)
+    y1(i) = 1/(1 + exp(-a1*(x(i)-c1)));     % S-curve acceleration 
+    y2(i) = 1/(1 + exp(-a2*(x(i)-c2)));     % S-curve deceleration
+    y(i)  = abs(y1(i)-y2(i))*255;  % absolute and *255 for scale to PWM
+    %y = abs(sigmf(x, params(1:2)) - sigmf(x, params(3:4)));
 end
 
-%% Plot S-Curve Zone#2 t1 - t2
-for t = 101 : 200
-        vh = (vs +v0)/2;
-        %s(t) = vh*t + (as*t^2)/2 + (jm*t^3)/6;
-        v(t) = v(100) + as*t + (jm*t^2)/2;
-        %a(t) = as + jm*t;
-end
-
-%%
-t = 1 : 100;
-plot(t,v(t),'-*')
-xlabel('Time (Second)')
-ylabel('Velocity')
-title('Plot of the S-Curve Velocity VS TIme')
+plot(x,y,'--r*')
+xlabel('Time (Seconds)')
+ylabel('PWM Max.255')
